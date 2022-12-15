@@ -1,0 +1,56 @@
+edition: 1.0.0
+name: compoent-test
+access: '{{ access }}'
+
+services:
+  fc-zip-oss-nas-service:
+    component: devsapp/fc
+    props:
+      region: '{{ region }}'
+      service:
+        name: '{{ serviceName }}'
+        vpcConfig: 
+          securityGroupId: "{{ securityGroupId }}"
+          vswitchIds: 
+            - "{{ vswitchId }}"
+          vpcId: "{{ vpcId }}"
+
+        nasConfig: 
+          userId:      0
+          groupId:     0
+          mountPoints: 
+            - 
+              serverAddr: "{{ mountPointsServerAddr }}"
+              nasDir:     /
+              fcDir:      /mnt/nas
+      function:
+        name: '{{ functionName }}'
+        handler: index.handler
+        timeout: 70000
+        diskSize: 10240
+        instanceType: c1
+        runtime: python3.9
+        cpu: 16
+        instanceConcurrency: 1
+        memorySize: 32768
+        environmentVariables:
+          TZ: Asia/Shanghai
+        asyncConfiguration:
+          maxAsyncEventAgeInSeconds: 70000
+          maxAsyncRetryAttempts: 3
+          statefulInvocation: true
+        codeUri: ./code/
+      triggers:
+        - name: unzip-oss-trigger
+          type: oss
+          config:
+            events:
+              - oss:ObjectCreated:PutObject
+              - oss:ObjectCreated:PostObject
+              - oss:ObjectCreated:CompleteMultipartUpload
+              - oss:ObjectCreated:PutSymlink
+            filter:
+              key:
+                prefix: "{{ prefix }}"
+                suffix: .zip
+            bucketName: "{{ bucketName }}"
