@@ -24,7 +24,6 @@ services:
         memorySize: 32768
         environmentVariables:
           TZ: Asia/Shanghai
-          environmentVariables:
           PROCESSED_DIR: "{{ processedDir }}"
           RETAIN_FILE_NAME: "{{ retainFileName }}"
         asyncConfiguration:
