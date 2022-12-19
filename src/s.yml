@@ -9,20 +9,9 @@ services:
       region: '{{ region }}'
       service:
         name: '{{ serviceName }}'
-        vpcConfig: 
-          securityGroupId: "{{ securityGroupId }}"
-          vswitchIds: 
-            - "{{ vswitchId }}"
-          vpcId: "{{ vpcId }}"
-
-        nasConfig: 
-          userId:      0
-          groupId:     0
-          mountPoints: 
-            - 
-              serverAddr: "{{ mountPointsServerAddr }}"
-              nasDir:     /
-              fcDir:      /mnt/nas
+        role: "{{ roleArn }}"
+        internetAccess: true
+        nasConfig: auto
       function:
         name: '{{ functionName }}'
         handler: index.handler
@@ -35,6 +24,9 @@ services:
         memorySize: 32768
         environmentVariables:
           TZ: Asia/Shanghai
+          environmentVariables:
+          PROCESSED_DIR: "{{ processedDir }}"
+          RETAIN_FILE_NAME: "{{ retainFileName }}"
         asyncConfiguration:
           maxAsyncEventAgeInSeconds: 70000
           maxAsyncRetryAttempts: 3
