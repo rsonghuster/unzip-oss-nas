@@ -51,12 +51,11 @@ def handler(event, context):
     tmpZipfile = "{}/{}".format(tmpWorkDir, zip_name)
     bucket.get_object_to_file(object_name, tmpZipfile)
 
-    zip_file = zipfile.ZipFile(tmpZipfile)
-    zip_list = zip_file.namelist()  # 得到压缩包里所有文件
-    for f in zip_list:
-        zip_file.extract(f, tmpWorkDir)  # 循环解压文件到指定目录
+    with zipfile.ZipFile(tmpZipfile) as zip_file:
+        zip_list = zip_file.namelist()
+        for f in zip_list:
+            zip_file.extract(f, tmpWorkDir)
 
-    zip_file.close()  # 关闭文件，必须有，释放内存
     print("解压完成")
     subprocess.check_call("rm -rf {}".format(tmpZipfile), shell=True)
     print("开始上传 ...")
