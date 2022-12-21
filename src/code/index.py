@@ -35,6 +35,7 @@ def handler(event, context):
         newKeyPrefix = PROCESSED_DIR
     else:
         newKeyPrefix = PROCESSED_DIR + zip_name
+    newKeyPrefix = newKeyPrefix.replace(".zip", "")
 
     tmpWorkDir = "/mnt/auto/{}".format(context.request_id)
     print(tmpWorkDir)
